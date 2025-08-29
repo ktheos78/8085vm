@@ -1,12 +1,12 @@
-# 8085vm v1.0
+# 8085vm v1.1
 
 ## About
 
-This is an emulator for the Intel 8085 processor that can load and run 8085 Assembly programs from memory. Almost all of the functionality of the original processor has been ported, except for interrupts and the AC flag. However, addresses `0xE000 - 0xFFFF` (8 KiB) are reserved for the stack. Additionally, addresses `0x2000` and `0x3000` function as standard input and standard output respectively.
+This is an emulator for the Intel 8085 processor that can load and run 8085 Assembly programs from memory. Almost all of the functionality of the original processor has been ported, except for interrupts, the AC flag and conditional instructions based on the S and P flags. However, addresses `0xE000 - 0xFFFF` (8 KiB) are reserved for the stack. Additionally, addresses `0x2000` and `0x3000` function as standard input and standard output respectively.
 
-To run the emulator and load a program into memory, the following command is used in the shell: `./8085vm <file> [address] [initial step delay]`, where `[address]` is the 16-bit memory address where the program will start (`0x0900` by default), and `[initial step delay]` is the initial value for the delay between instruction (0 by default).
+To run the emulator and load a program into memory (address 0x0800), the following command is used in the shell: `./8085vm <file> [initial step delay]`, where `[initial step delay]` is the initial value in seconds for the delay between each instruction (0 by default).
 
-Note that the program has to be a binary comprised of assembled bytecode. A small python script to turn a (manually typed) Assembly program into such a binary has been included, along with an example program (perhaps in the future I will also write an assembler to avoid this tedious process).
+Note that the program has to be a binary comprised of assembled bytecode. I've written an assembler for this purpose, which is available [here](https://github.com/ktheos78/asm8085). 
 
 ## Debugger
 
@@ -29,7 +29,3 @@ This emulator also comes with a basic debugger, with the following commands:
 
 6. `exit` - halt execution, dump CPU state and exit  
     Usage: `exit`
-
-## Additional notes
-
-To run the emulator, run the script `run.sh`, which generates the program binary to be loaded, compiles the emulator and launches it with load address `0x0900` and initial step delay of 1 second.

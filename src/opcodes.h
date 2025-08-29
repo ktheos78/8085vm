@@ -4,15 +4,21 @@
 #include <stdint.h>
 #include "cpu.h"
 
-#define OP_ARITHMETIC 0
-#define OP_LOGICAL 1
-#define OP_INRDCR 2 
+enum
+{
+    OP_ARITHMETIC = 0,
+    OP_LOGICAL,
+    OP_INRDCR
+};
 
-#define COND_ALWAYS 0b000
-#define COND_Z 0b001
-#define COND_NZ 0b010
-#define COND_C 0b011
-#define COND_NC 0b100
+enum
+{
+    COND_ALWAYS = 0,
+    COND_Z,
+    COND_NC,
+    COND_C,
+    COND_NZ
+};
 
 typedef void (*InstrFunc) (void);
 

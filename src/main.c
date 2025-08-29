@@ -13,7 +13,7 @@
 uint8_t memory[MEMORY_MAX];
 uint8_t regs[R_COUNT];
 uint8_t flags = 0;
-uint16_t PC = 0x0900;
+uint16_t PC = 0x0800;
 uint16_t SP = 0xFFFF;
 
 uint8_t opcode;
@@ -22,10 +22,10 @@ uint8_t running = 1;
 // debug
 int step_sec = 0;
 
-void load_program(char *program_path, char *addr)
+void load_program(char *program_path)
 {
     long filesize;
-    uint16_t load_addr;
+    uint16_t load_addr = 0x0800;
 
     FILE *f = fopen(program_path, "rb");
     if (f == NULL)
@@ -39,8 +39,6 @@ void load_program(char *program_path, char *addr)
     filesize = ftell(f);
     fseek(f, 0, SEEK_SET);
 
-    load_addr = addr ? (uint16_t)strtol(addr, NULL, 16) : 0x0900;
-
     // ensure program doesn't cross into stack segment
     if (load_addr + filesize >= STACK_SEGMENT_START)
     {
@@ -50,7 +48,7 @@ void load_program(char *program_path, char *addr)
 
     fread(&memory[load_addr], 1, filesize, f);
     fclose(f);
-    PC = (uint32_t)load_addr;
+    PC = load_addr;
 }
 
 // program loop
@@ -59,7 +57,7 @@ void *run_prog(void *args)
     char **argv = (char **)args;
 
     // load program into memory
-    load_program(argv[1], argv[2]);
+    load_program(argv[1]);
 
     // main loop
     while (PC < STACK_SEGMENT_START && running)
@@ -86,7 +84,7 @@ int main(int argc, char **argv)
     if (argv[1] == NULL)
     {
         fprintf(stderr, "Error: no file provided\n");
-        fprintf(stderr, "Usage: %s <program> [address] [initial step delay]\n", argv[0]);
+        fprintf(stderr, "Usage: %s <program> [initial step delay]\n", argv[0]);
         exit(1);
     }
 
@@ -94,8 +92,8 @@ int main(int argc, char **argv)
     init_opcodes();
     memset(memory, 0, sizeof(memory));
     flags = 0;
-    if (argv[3] != NULL)
-        step_sec = (uint32_t)strtol(argv[3], NULL, 0);
+    if (argv[2] != NULL)
+        step_sec = (uint32_t)strtol(argv[2], NULL, 0);
 
     // spawn program and debugger thread
     ret_prog = pthread_create(&prog_thread, NULL, run_prog, (void *)argv);
